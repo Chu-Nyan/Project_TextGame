@@ -1,4 +1,6 @@
 ﻿
+using System.Text;
+
 interface IInventory
 {
     public List<Item> Inventory { get; }
@@ -12,6 +14,7 @@ class Unit
     protected int atk;
     protected int def;
     protected int exp;
+    protected int gold;
     protected bool isDead = false;
 
     public string Name { get { return name; } set { name = value; } }
@@ -32,7 +35,7 @@ class Unit
     public int Atk { get { return atk; } set { atk = value; } }
     public int Def { get { return def; } set { def = value; } }
     public virtual int Exp { get { return exp; } set { exp = value; } }
-
+    public int Gold { get { return gold; } set { gold = value; } }
 
     public virtual void RenderStatus() { }
 }
@@ -41,11 +44,13 @@ class Player : Unit, IInventory
 {
     public Player()
     {
+        job = "";
         maxHp = 100;
         hp = 100;
         atk = 20;
         def = 3;
         exp = 0;
+        gold = 0;
     }
     // Player 스테이터스
     string job;
@@ -87,8 +92,6 @@ class Player : Unit, IInventory
             {
                 return;
             }
-
-
         }
     }
 
@@ -108,37 +111,53 @@ class Player : Unit, IInventory
         Console.WriteLine("레벨업");
     }
 
-    public void RenderStatus()
+    // 스테이터스 출력
+    public override void RenderStatus()
     {
         Console.WriteLine($"정보 {Name} ___________");
         Console.WriteLine($"직업 : {Job}");
-        Console.WriteLine($"체력 : {Hp} \t\\{MaxHp}");
-        Console.WriteLine($"경험치 : {Exp} \t\\{LevelUpExp}");
-        Console.WriteLine($"공격력 : {Atk} \t\\방어력 : {Def}\n");
+        Console.WriteLine($"체력 : {Hp} / {MaxHp}");
+        Console.WriteLine($"경험치 : {Exp} / {LevelUpExp}");
+        Console.WriteLine($"공격력 : {Atk}");
+        Console.WriteLine($"방어력 : {Def}\n");
 
-        Console.WriteLine("1. 장비 교체 \n2. 아이템 사용\n3.돌아가기");
-        ConsoleKey inputKey = GameManager.GM.ReadNunberKeyInfo(3);
+        Console.WriteLine("1. 돌아가기");
+        ConsoleKey inputKey = GameManager.GM.ReadNunberKeyInfo(1);
         if (inputKey == ConsoleKey.D1)
-        {
-            Console.WriteLine("장비 교체");
-        }
-        else if (inputKey == ConsoleKey.D2)
-        {
-            Console.WriteLine("아이팀 사용");
-        }
-        else if (inputKey == ConsoleKey.D3)
         {
             return;
         }
     }
 
+    // 인벤토리 출력
     public void RenderInventori()
     {
+        Console.WriteLine("가방 ______________");
 
+        for (int num = 0; num < Inventory.Count; num++)
+        {
+            StringBuilder invenText = new StringBuilder();
+            invenText.Append($"{num+1}. {Inventory[num].Name}\t{Inventory[num].Gold}");
+            Console.WriteLine(invenText);
+        }
+        Console.WriteLine("___________________\n");
+        Console.ReadLine();
     }
+
 
     public void OpenInventori()
     {
+        RenderInventori();
+        Console.WriteLine("1. 장착 관리 2. 닫기");
+        ConsoleKey inputKey = GameManager.GM.ReadNunberKeyInfo(2);
+        if (inputKey == ConsoleKey.D1) 
+        {
+            Console.WriteLine("장착 관리");
+        }
+        else if (inputKey == ConsoleKey.D2)
+        {
+            return;
+        }
 
     }
 

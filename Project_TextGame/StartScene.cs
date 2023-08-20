@@ -14,8 +14,8 @@ struct StartScene
         empty
     }
 
-    string? newName = null;
-    string? newJob = null;
+    string newName = "";
+    string newJob = "";
     int addMaxHp = 0;
     int addAtk = 0;
     int addDef = 0;

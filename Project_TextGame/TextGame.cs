@@ -40,7 +40,7 @@ class Town
 
         if (key == ConsoleKey.D2) // 가방 열기
         {
-
+            player.OpenInventori();
         }
 
         if (key == ConsoleKey.D3) // 상점 방문
@@ -63,10 +63,10 @@ internal class TextGame
         Town town = new Town(newPlayer);
         new GameManager();
         // 스타트 씬
-        StartScene startScene = new StartScene(newPlayer);
+        //StartScene startScene = new StartScene(newPlayer);
         //startScene.IntroStartScene();
-        startScene.SettingBackGround();
-        startScene.FinishScene();
+        //startScene.SettingBackGround();
+        //startScene.FinishScene();
         
         // 타운 방문으로 게임 시작
         town.VisitTown();

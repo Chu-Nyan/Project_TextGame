@@ -1,7 +1,14 @@
-﻿class Item
+﻿enum ItemName
+{
+    SteelSword,
+    WoodShield
+
+}
+
+class Item
 {
     protected string name = "";
-    protected int gold;
+    protected int gold = 0;
 
     public string Name { get { return name; } }
     public int Gold { get { return gold; } }
