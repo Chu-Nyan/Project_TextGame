@@ -1,6 +1,10 @@
-﻿
-using System.Reflection;
-using System.Text;
+﻿using System.Text;
+
+enum MonsterCode
+{
+    Goblin,
+    Orc
+}
 
 interface IInventory
 {
@@ -18,6 +22,49 @@ struct BattlePhase
         this.monster = monster;
     }
 
+    public void BattleScene()
+    {
+        RenderBattleScene();
+    }
+
+    void RenderBattleScene()
+    {
+        while (player.IsDead ==false && monster.IsDead ==false)
+        {
+            Console.Clear();
+            Console.WriteLine($"\t{player.Name}  VS  {monster.Name}    ");
+            Console.WriteLine($"{player.Hp}\t  VS  {monster.Hp}");
+
+            BattleUnits();
+        }
+    }
+
+    void BattleUnits()
+    {
+        StringBuilder playerAtkTxt = new StringBuilder($"{player.Name}의 공격!!");
+        StringBuilder playerDefTxt = new StringBuilder();
+        StringBuilder MonsterAtkTxt = new StringBuilder();
+        StringBuilder MonsterDefTxt = new StringBuilder();
+        AttckUnit(player, monster);
+    }
+
+    void AttckUnit(Unit atkUnit, Unit defUnit)
+    {
+        int damage = atkUnit.Atk - defUnit.Def;
+        if (damage < 1)
+        {
+            damage = 1;
+        }
+        defUnit.Hp -= damage;
+
+        StringBuilder playerAtkTxt = new StringBuilder($"{atkUnit.Name}의 공격!!");
+        StringBuilder playerDefTxt = new StringBuilder($"{defUnit.Name}은 {damage}의 피해를 입었다!!");
+        Thread.Sleep(1000);
+        Console.WriteLine(playerAtkTxt);
+        Thread.Sleep(1000);
+        Console.WriteLine(playerDefTxt);
+        Thread.Sleep(1000);
+    }
 
 }
 
@@ -51,6 +98,7 @@ class Unit
     public int Def { get { return def; } set { def = value; } }
     public virtual int Exp { get { return exp; } set { exp = value; } }
     public int Gold { get { return gold; } set { gold = value; } }
+    public bool IsDead { get { return isDead; } set { isDead = value; } }
 
     public virtual void RenderStatus() { }
 }
@@ -87,7 +135,7 @@ class Player : Unit, IInventory
 
 
     List<Item> inventory = new List<Item>(10);
-    List<Equipment> equipmentParts = new List<Equipment>(7) { new Equipment(), new Equipment(), new Equipment(), new Equipment(),new Equipment(), new Equipment(), new Equipment()};
+    List<Equipment> equipmentParts = new List<Equipment>(7) { new Equipment(), new Equipment(), new Equipment(), new Equipment(), new Equipment(), new Equipment(), new Equipment() };
 
     // 스테이터스 접근 함수
     public string Job { get { return job; } set { job = value; } }
@@ -226,7 +274,7 @@ class Player : Unit, IInventory
             ChangeParts((Equipment)Inventory[(int)inputKey - 49]);
         }
 
-       
+
     }
 
 
@@ -356,7 +404,38 @@ class Player : Unit, IInventory
 }
 
 
+struct MonsterDB
+{
+    public MonsterDB(MonsterCode code, out string name, out int hp, out int atk, out int def)
+    {
+        switch (code)
+        {
+            case MonsterCode.Goblin:
+                name = "고블린";
+                hp = 40;
+                atk = 5;
+                def = 2;
+                break;
+            case MonsterCode.Orc:
+                name = "오크";
+                hp = 60;
+                atk = 10;
+                def = 5;
+                break;
+            default:
+                name = "오류";
+                hp = 1;
+                atk = 0;
+                def = 0;
+                break;
+        }
+    }
+}
+
 class Monster : Unit
 {
-
+    public Monster(MonsterCode code)
+    {
+        MonsterDB monsterDB = new MonsterDB(MonsterCode.Goblin, out name, out hp, out atk, out def);
+    }
 }

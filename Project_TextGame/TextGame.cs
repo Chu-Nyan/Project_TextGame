@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using System.Text;
 
 enum Region
@@ -24,48 +25,47 @@ class Town : IInventory
 
     public Region VisitTown()
     {
-        while (true)
-        {
-            RenderTownUI();
-            return moveRegion;
-        }
+        RenderTownUI();
+        return moveRegion;
     }
 
     void RenderTownUI()
     {
-        Console.Clear();
-        Console.WriteLine("라면 마을 ____________\n"); //1,2번 줄
-        Console.WriteLine
-            (
-            "이 곳 사람들은 반들반들 피부에서 윤기가 흐른다.\n" +
-            "질 좋은 라면이 공급되고 있는 모양이니 나가기 전에 한그릇 해야겠다.\n"
-            );
-        Console.WriteLine("어떤 행동을 하시겠습니까?");
-        Console.WriteLine("1. 나의 정보 확인");
-        Console.WriteLine("2. 가방 열기");
-        Console.WriteLine("3. 상점 방문");
-        Console.WriteLine("4. 숲으로 향한다.\n");
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("라면 마을 ____________\n"); //1,2번 줄
+            Console.WriteLine
+                (
+                "이 곳 사람들은 반들반들 피부에서 윤기가 흐른다.\n" +
+                "질 좋은 라면이 공급되고 있는 모양이니 나가기 전에 한그릇 해야겠다.\n"
+                );
+            Console.WriteLine("어떤 행동을 하시겠습니까?");
+            Console.WriteLine("1. 나의 정보 확인");
+            Console.WriteLine("2. 가방 열기");
+            Console.WriteLine("3. 상점 방문");
+            Console.WriteLine("4. 숲으로 향한다.\n");
 
-        ConsoleKey key = GameManager.GM.ReadNunberKeyInfo(4);
+            ConsoleKey key = GameManager.GM.ReadNunberKeyInfo(4);
 
-        if (key == ConsoleKey.D1) // 나의 정보 확인
-        {
-            player.RenderStatus();
+            if (key == ConsoleKey.D1) // 나의 정보 확인
+            {
+                player.RenderStatus();
+            }
+            else if (key == ConsoleKey.D2) // 가방 열기
+            {
+                player.InventoriUI();
+            }
+            else if (key == ConsoleKey.D3) // 상점 방문
+            {
+                VisitShop();
+            }
+            else if (key == ConsoleKey.D4) // 던전
+            {
+                moveRegion = Region.Dungeon;
+                return;
+            }
         }
-        else if (key == ConsoleKey.D2) // 가방 열기
-        {
-            player.InventoriUI();
-        }
-        else if (key == ConsoleKey.D3) // 상점 방문
-        {
-            VisitShop();
-        }
-        else if (key == ConsoleKey.D4) // 던전
-        {
-            moveRegion = Region.Dungeon;
-            return;
-        }
-
     }
 
     void RenderVisitShop()
@@ -178,7 +178,7 @@ class Town : IInventory
 
                 if (player.Inventory[num] is Equipment)
                 {
-                        invenText.Append($"금화 : {player.Inventory[num].Gold*0.8f}");
+                    invenText.Append($"금화 : {player.Inventory[num].Gold * 0.8f}");
                 }
 
                 Console.WriteLine(invenText);
@@ -202,7 +202,7 @@ class Town : IInventory
                 player.Gold += sellGold;
                 player.Inventory.Remove(sellItem);
                 // 장착한 아이템인지 확인 후 제거
-                if (sellItem is Equipment &&sellItem == player.EquipmentParts[((Equipment)sellItem).Part])
+                if (sellItem is Equipment && sellItem == player.EquipmentParts[((Equipment)sellItem).Part])
                 {
                     player.ChangeParts((Equipment)sellItem);
                 }
@@ -221,54 +221,61 @@ class Dungeon
 {
     Player player;
     Region moveRegion;
-    public Dungeon(Player player) 
+
+    int dungeonMinDef;
+    int dungeonMaxAft;
+    public Dungeon(Player player)
     {
         this.player = player;
     }
 
     public Region VisitDungeon()
     {
-        while (true)
-        {
-            RenderEntryDungeon();
-            return moveRegion;
-        }
+        RenderEntryDungeon();
+        return moveRegion;
     }
 
     void RenderEntryDungeon()
     {
-        Console.Clear();
-        Console.WriteLine("어두운 숲 ____________\n"); //1,2번 줄
-        Console.WriteLine
-            (
-            "한때는 질 좋은 라면 재료를 제공했던 숲이었으나\n" +
-            "지금은 알 수 없는 이유로 폐쇄되었다.\n"
-            );
-        Console.WriteLine("어떤 행동을 하시겠습니까?");
-        Console.WriteLine("1. 입구 근처를 수색한다.");
-        Console.WriteLine("2. 숲에서 재료를 채취한다.");
-        Console.WriteLine("3. 깊숙한 곳으로 탐험을 떠난다.");
-        Console.WriteLine("4. 마을로 돌아간다.\n");
-        ConsoleKey inputKey = GameManager.GM.ReadNunberKeyInfo(4);
-        if (inputKey == ConsoleKey.D1)
+        while (true)
         {
-
-        }
-        else if (inputKey == ConsoleKey.D2)
-        {
-
-        }
-        else if (inputKey == ConsoleKey.D3)
-        { 
-        }
-        else if (inputKey == ConsoleKey.D4)
-        {
-            moveRegion = Region.Town;
+            Console.Clear();
+            Console.WriteLine("어두운 숲 ____________\n"); //1,2번 줄
+            Console.WriteLine
+                (
+                "한때는 질 좋은 라면 재료를 제공했던 숲이었으나\n" +
+                "지금은 알 수 없는 이유로 폐쇄되었다.\n"
+                );
+            Console.WriteLine("어떤 행동을 하시겠습니까?");
+            Console.WriteLine("1. 입구 근처를 수색한다.");
+            Console.WriteLine("2. 숲에서 재료를 채취한다.");
+            Console.WriteLine("3. 깊숙한 곳으로 탐험을 떠난다.");
+            Console.WriteLine("4. 마을로 돌아간다.\n");
+            ConsoleKey inputKey = GameManager.GM.ReadNunberKeyInfo(4);
+            if (inputKey == ConsoleKey.D1)
+            {
+                DungeonLevel1();
+            }
+            else if (inputKey == ConsoleKey.D2)
+            {
+            }
+            else if (inputKey == ConsoleKey.D3)
+            {
+            }
+            else if (inputKey == ConsoleKey.D4)
+            {
+                moveRegion = Region.Town;
+                return;
+            }
         }
     }
 
     void DungeonLevel1()
     {
+        Monster newMonster = new Monster(MonsterCode.Goblin);
+        BattlePhase battlePhase = new BattlePhase(player, newMonster);
+        battlePhase.BattleScene();
+
 
     }
 }
