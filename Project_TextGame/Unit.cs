@@ -56,6 +56,7 @@ class Player : Unit, IInventory
 
         inventory.Add(new SteelSword());
         inventory.Add(new WoodShield());
+        inventory.Add(new PlateArmour());
 
         equipmentParts[0] = (Equipment)Inventory[1];
         equipmentParts[1] = (Equipment)Inventory[0];
@@ -98,6 +99,11 @@ class Player : Unit, IInventory
         set { inventory = value; }
     }
 
+    public List<Equipment> EquipmentParts
+    {
+        get { return equipmentParts; }
+        set { equipmentParts = value; }
+    }
 
     //아이템 추가
     public void AddItem(Item newItem)
@@ -178,13 +184,14 @@ class Player : Unit, IInventory
         {
             RenderInventori(false);
             Console.WriteLine("1. 장착 관리 2. 정렬 3. 닫기");
-            ConsoleKey inputKey = GameManager.GM.ReadNunberKeyInfo(2);
+            ConsoleKey inputKey = GameManager.GM.ReadNunberKeyInfo(3);
             if (inputKey == ConsoleKey.D1)
             {
                 ChangeEquipmentUI();
             }
             else if (inputKey == ConsoleKey.D2)
             {
+                Inventory = Inventory.OrderBy(item => item.ID).ToList();
                 Inventory = Inventory.OrderBy(item => item.ID).ToList();
             }
             else if (inputKey == ConsoleKey.D3)
@@ -206,51 +213,54 @@ class Player : Unit, IInventory
             ChangeParts((Equipment)Inventory[(int)inputKey - 49]);
         }
 
-        // 아이템 장착 및 해제
-        void ChangeParts(Equipment item)
-        {
-            // 장착 아이템 선택시 해제
-            for (int num = 0; num < equipmentParts.Count; num++)
-            {
-                if (item == equipmentParts[num])
-                {
-                    equipmentParts[num] = null;
-                    ScanItemStatus();
-                    return;
-                }
-            }
-            
-            // 선택 아이템을 장착
-            switch (item.Part)
-            {
-                case EquipmentPart.Left:
-                    equipmentParts[(int)EquipmentPart.Left] = item;
-                    break;
-                case EquipmentPart.Right:
-                    equipmentParts[(int)EquipmentPart.Right] = item;
-                    break;
-                case EquipmentPart.TwoHand:
-                    equipmentParts[(int)EquipmentPart.Left] = null;
-                    equipmentParts[(int)EquipmentPart.Right] = item;
-                    break;
-                case EquipmentPart.Head:
-                    equipmentParts[(int)EquipmentPart.Head] = item;
-                    break;
-                case EquipmentPart.Top:
-                    equipmentParts[(int)EquipmentPart.Top] = item;
-                    break;
-                case EquipmentPart.Pants:
-                    equipmentParts[(int)EquipmentPart.Pants] = item;
-                    break;
-                case EquipmentPart.Shoes:
-                    equipmentParts[(int)EquipmentPart.Shoes] = item;
-                    break;
-                default:
-                    break;
-            }
+       
+    }
 
-            ScanItemStatus();
+
+    // 아이템 장착 및 해제
+    public void ChangeParts(Equipment item)
+    {
+        // 장착 아이템 선택시 해제
+        for (int num = 0; num < equipmentParts.Count; num++)
+        {
+            if (item == equipmentParts[num])
+            {
+                equipmentParts[num] = null;
+                ScanItemStatus();
+                return;
+            }
         }
+
+        // 선택 아이템을 장착
+        switch ((EquipmentPart)item.Part)
+        {
+            case EquipmentPart.Left:
+                equipmentParts[(int)EquipmentPart.Left] = item;
+                break;
+            case EquipmentPart.Right:
+                equipmentParts[(int)EquipmentPart.Right] = item;
+                break;
+            case EquipmentPart.TwoHand:
+                equipmentParts[(int)EquipmentPart.Left] = null;
+                equipmentParts[(int)EquipmentPart.Right] = item;
+                break;
+            case EquipmentPart.Head:
+                equipmentParts[(int)EquipmentPart.Head] = item;
+                break;
+            case EquipmentPart.Top:
+                equipmentParts[(int)EquipmentPart.Top] = item;
+                break;
+            case EquipmentPart.Pants:
+                equipmentParts[(int)EquipmentPart.Pants] = item;
+                break;
+            case EquipmentPart.Shoes:
+                equipmentParts[(int)EquipmentPart.Shoes] = item;
+                break;
+            default:
+                break;
+        }
+
+        ScanItemStatus();
     }
 
     // 아이템 스테이터스 검사
@@ -292,8 +302,7 @@ class Player : Unit, IInventory
     public void RenderInventori(bool isSeclet)
     {
         Console.Clear();
-        Console.WriteLine("가방 ______________ ");
-        Console.WriteLine("이름\t\t\t골드\n");
+        Console.WriteLine($"[가방] ______________ 가진 금화 : {Gold}\n");
         for (int num = 0; num < Inventory.Count; num++)
         {
             StringBuilder invenText = new StringBuilder();
@@ -311,7 +320,22 @@ class Player : Unit, IInventory
                 }
 
             }
-            invenText.Append($"{Inventory[num].Name}{(String.Format("{0,15}", "\t" + Inventory[num].Gold))}");
+            invenText.Append($"{Inventory[num].Name}\t\t");
+
+            if (Inventory[num] is Equipment)
+            {
+                if (((Equipment)Inventory[num]).Atk != 0)
+                {
+                    invenText.Append($"ATK : {((Equipment)Inventory[num]).Atk}\t");
+                }
+                if (((Equipment)Inventory[num]).Def != 0)
+                {
+                    invenText.Append($"DEF : {((Equipment)Inventory[num]).Def}");
+
+                }
+
+            }
+
             Console.WriteLine(invenText);
         }
         Console.WriteLine("___________________\n");
