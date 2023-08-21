@@ -3,6 +3,12 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Text;
 
+enum Region
+{
+    Town,
+    Dungeon
+}
+
 class Town : IInventory
 {
     public Town(Player player)
@@ -10,16 +16,18 @@ class Town : IInventory
         this.player = player;
     }
 
+    Region moveRegion;
     Player player;
     List<Item> inventory = new List<Item>() { new SteelSword(), new WoodShield(), new LeatherArmour(), new LeatherPants(), new LeatherShoes(), new PlateArmour() };
 
     public List<Item> Inventory { get { return inventory; } }
 
-    public void VisitTown()
+    public Region VisitTown()
     {
         while (true)
         {
             RenderTownUI();
+            return moveRegion;
         }
     }
 
@@ -35,25 +43,28 @@ class Town : IInventory
         Console.WriteLine("어떤 행동을 하시겠습니까?");
         Console.WriteLine("1. 나의 정보 확인");
         Console.WriteLine("2. 가방 열기");
-        Console.WriteLine("3. 상점 방문\n");
+        Console.WriteLine("3. 상점 방문");
+        Console.WriteLine("4. 숲으로 향한다.\n");
 
-        ConsoleKey key = GameManager.GM.ReadNunberKeyInfo(3);
+        ConsoleKey key = GameManager.GM.ReadNunberKeyInfo(4);
 
         if (key == ConsoleKey.D1) // 나의 정보 확인
         {
             player.RenderStatus();
         }
-
-        if (key == ConsoleKey.D2) // 가방 열기
+        else if (key == ConsoleKey.D2) // 가방 열기
         {
             player.InventoriUI();
         }
-
-        if (key == ConsoleKey.D3) // 상점 방문
+        else if (key == ConsoleKey.D3) // 상점 방문
         {
             VisitShop();
         }
-
+        else if (key == ConsoleKey.D4) // 던전
+        {
+            moveRegion = Region.Dungeon;
+            return;
+        }
 
     }
 
@@ -202,12 +213,64 @@ class Town : IInventory
             }
         }
     }
+
 }
 
 
 class Dungeon
 {
+    Player player;
+    Region moveRegion;
+    public Dungeon(Player player) 
+    {
+        this.player = player;
+    }
 
+    public Region VisitDungeon()
+    {
+        while (true)
+        {
+            RenderEntryDungeon();
+            return moveRegion;
+        }
+    }
+
+    void RenderEntryDungeon()
+    {
+        Console.Clear();
+        Console.WriteLine("어두운 숲 ____________\n"); //1,2번 줄
+        Console.WriteLine
+            (
+            "한때는 질 좋은 라면 재료를 제공했던 숲이었으나\n" +
+            "지금은 알 수 없는 이유로 폐쇄되었다.\n"
+            );
+        Console.WriteLine("어떤 행동을 하시겠습니까?");
+        Console.WriteLine("1. 입구 근처를 수색한다.");
+        Console.WriteLine("2. 숲에서 재료를 채취한다.");
+        Console.WriteLine("3. 깊숙한 곳으로 탐험을 떠난다.");
+        Console.WriteLine("4. 마을로 돌아간다.\n");
+        ConsoleKey inputKey = GameManager.GM.ReadNunberKeyInfo(4);
+        if (inputKey == ConsoleKey.D1)
+        {
+
+        }
+        else if (inputKey == ConsoleKey.D2)
+        {
+
+        }
+        else if (inputKey == ConsoleKey.D3)
+        { 
+        }
+        else if (inputKey == ConsoleKey.D4)
+        {
+            moveRegion = Region.Town;
+        }
+    }
+
+    void DungeonLevel1()
+    {
+
+    }
 }
 
 internal class TextGame
@@ -217,6 +280,7 @@ internal class TextGame
         new GameManager();
         Player newPlayer = new Player();
         Town town = new Town(newPlayer);
+        Dungeon dungeon = new Dungeon(newPlayer);
         // 스타트 씬
         //StartScene startScene = new StartScene(newPlayer);
         //startScene.IntroStartScene();
@@ -224,10 +288,19 @@ internal class TextGame
         //startScene.FinishScene();
 
         // 타운 방문으로 게임 시작
-        town.VisitTown();
+        Region whereIGo = town.VisitTown();
 
-        Console.ReadKey();
-
-
+        while (true)
+        {
+            switch (whereIGo)
+            {
+                case Region.Town:
+                    whereIGo = town.VisitTown();
+                    break;
+                case Region.Dungeon:
+                    whereIGo = dungeon.VisitDungeon();
+                    break;
+            }
+        }
     }
 }

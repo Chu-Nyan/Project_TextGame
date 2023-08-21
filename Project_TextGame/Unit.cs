@@ -8,6 +8,19 @@ interface IInventory
 }
 
 
+struct BattlePhase
+{
+    Player player;
+    Monster monster;
+    public BattlePhase(Player player, Monster monster)
+    {
+        this.player = player;
+        this.monster = monster;
+    }
+
+
+}
+
 class Unit
 {
     protected string name = "";
