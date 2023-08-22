@@ -23,7 +23,6 @@
             if (player.IsDead == true)
             {
                 moveRegion = Region.Town;
-                player.IsDead = false;
                 return;
             }
             Console.Clear();

@@ -37,23 +37,34 @@ struct BattlePhase
     void RenderBattleScene()
     {
         bool isMyTurn = true;
-        while (player.IsDead == false && monster.IsDead == false)
+        while (true)
         {
             Console.Clear();
             ImageManager.IM.vsMonster(player, monster);
 
             Console.WriteLine("전투 메세지 :");
 
+            if (player.IsDead == true)
+            {
+                player.DeadTigger(monster);
+                Thread.Sleep(2000);
+                return;
+            }
             if (isMyTurn == true)
             {
                 AttckUnit(player, monster);
-
                 isMyTurn = false;
             }
-            else if (isMyTurn == false && monster.IsDead == false)
+            else if (isMyTurn == false)
             {
                 Console.WriteLine(playerAtkTxt);
                 Console.WriteLine(playerDefTxt);
+                if (monster.IsDead == true)
+                {
+                    monster.DeadTigger(player);
+                    Thread.Sleep(2000);
+                    return;
+                }
                 AttckUnit(monster, player);
                 isMyTurn = true;
             }
@@ -71,15 +82,11 @@ struct BattlePhase
 
         playerAtkTxt = new StringBuilder($"\n{atkUnit.Name}{AddAttckText()}");
         playerDefTxt = new StringBuilder($"{defUnit.Name}은 {damage}의 피해를 입었다!!");
+        Thread.Sleep(1000);
         Console.WriteLine(playerAtkTxt);
         Thread.Sleep(1000);
         Console.WriteLine(playerDefTxt);
         Thread.Sleep(1000);
-        if (defUnit.IsDead == true)
-        {
-            defUnit.DeadTigger(atkUnit);
-            return;
-        }
     }
 
     StringBuilder AddAttckText()
@@ -87,7 +94,7 @@ struct BattlePhase
         Random randomText = new Random();
         StringBuilder attckText = new StringBuilder();
 
-        switch (randomText.Next(0, 5))
+        switch (randomText.Next(0, 7))
         {
             case 0:
                 attckText.Append("은(는) 왼쪽으로 파고 들었다");
@@ -103,6 +110,12 @@ struct BattlePhase
                 break;
             case 4:
                 attckText.Append(" \"선라이트 옐로 오버드라이브!!\"");
+                break;
+            case 5:
+                attckText.Append(" \"오라오라오라오라\"");
+                break;
+            case 6:
+                attckText.Append("! 몸통 박치기!!");
                 break;
             default:
                 attckText.Append("는 공격하였다");
@@ -175,7 +188,6 @@ class Player : Unit, IInventory
 
         inventory.Add(new SteelSword());
         inventory.Add(new WoodShield());
-        inventory.Add(new PlateArmour());
 
         equipmentParts[0] = (Equipment)Inventory[1];
         equipmentParts[1] = (Equipment)Inventory[0];
@@ -300,7 +312,8 @@ class Player : Unit, IInventory
     // 죽었을 경우
     public override void DeadTigger(Unit Killer)
     {
-        StringBuilder Text = new StringBuilder($"{Name}은 {Killer.Name}에게 비참하게 죽었다.\n");
+        StringBuilder Text = new StringBuilder($"{Name}은 {Killer.Name}에게 비참하게 패배하였습니다.\n");
+        Hp = 1;
         Text.AppendLine("마을로 돌아갑니다");
         Console.WriteLine("\n" + Text);
 
@@ -562,9 +575,15 @@ struct MonsterDB
 
 class Monster : Unit
 {
+    public bool isRevision = false;
+
     public Monster(MonsterCode code, float revisionStatus)
     {
         new MonsterDB(code, out name, out hp, out atk, out def, out exp, out gold);
+        if (revisionStatus > 1.0)
+        {
+            isRevision = true;
+        }
         ReviseStatus(revisionStatus);
         maxHp = hp;
 
@@ -572,13 +591,14 @@ class Monster : Unit
 
     public override void DeadTigger(Unit Killer)
     {
-        Killer.Exp += Exp;
-        Killer.Gold += gold;
-
         StringBuilder Text = new StringBuilder($"{Name}은 무참하게 죽었다.\n\n");
         Text.AppendLine($"{Killer.Name}은 경험치 {Exp}를 획득하였습니다.");
         Text.AppendLine($"{gold}금화를 획득하였습니다.");
         Console.WriteLine("\n" + Text);
+
+        Killer.Exp += Exp;
+        Killer.Gold += gold;
+
         GameManager.GM.PressAnyKey();
 
     }

@@ -1,4 +1,6 @@
-﻿class ImageManager
+﻿using System.Text;
+
+class ImageManager
 {
     public static ImageManager IM;
     ConsoleColor monsterColor;
@@ -28,6 +30,19 @@
     "┃   /  /      \\/  \\/\\   \\  /      \\    /   /    \\                   ┃\n" +
     "┃__/__/_______/___/__\\___\\__________________________________________┃\n" +
     "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
+
+    string Shop =
+        "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n" +
+        "┃          ______                                                   ┃\n" +
+        "┃    ＿＿／      ＼                                                 ┃\n" +
+        "┃   (  ＿     -ω- |                                                 ┃\n" +
+        "┃    ＼\\          ｜              ※주의 사항※                       ┃\n" +
+        "┃    ∠ノ        / ｜               환불 불가                        ┃\n" +
+        "┃    (         ／／                교환 불가                        ┃\n" +
+        "┃    ｜  ＿＿ノ￣￣)               카드 거절                        ┃\n" +
+        "┃    ｜ /    ￣/ ／                                                 ┃\n" +
+        "┃    ｜/      /／                                                   ┃\n" +
+        "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
 
     public void vsMonster(Unit player, Unit monster)
     {
@@ -60,7 +75,12 @@
             monsterColor = ConsoleColor.Red;
         }
 
-        Console.WriteLine("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
+        StringBuilder monsterLvtxt = new StringBuilder("┏━━━━━━━━━━━━━━━━━━━━━━━━  < 괴 물 출 현 >  ━━━━━━━━━━━━━━━━━━━━━━━━┓");
+        if (((Monster)monster).isRevision == true)
+        {
+            monsterLvtxt.Replace("괴 물", "강 적");
+        }
+        Console.WriteLine(monsterLvtxt);
         Console.WriteLine("┃                                                                   ┃");
         Console.Write("┃                    ");
         Console.ForegroundColor= playerColor;
@@ -112,8 +132,14 @@
             case "Dungeon":
                 Console.WriteLine(Dungeon);
                 break;
+            case "Shop":
+                Console.WriteLine(Shop);
+                break;
+
+
             default:
                 break;
         }
     }
 }
+

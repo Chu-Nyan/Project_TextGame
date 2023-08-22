@@ -6,7 +6,7 @@ class Town : IInventory
     Player player;
     List<Item> inventory = new List<Item>()  // 상점 아이템
     {
-        new SteelSword(), new WoodShield(), new LeatherArmour(),
+        new ShortBow(),new LongLance(), new SteelShield(), new LeatherArmour(),
         new LeatherPants(), new LeatherShoes(), new PlateArmour()
     };
 
@@ -21,6 +21,7 @@ class Town : IInventory
     // 마을 입출국 관리 함수
     public Region VisitTown()
     {
+        player.IsDead = false;
         RenderTownUI();
         return moveRegion;
     }
@@ -39,9 +40,10 @@ class Town : IInventory
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("어떤 행동을 하시겠습니까?\n");
             Console.ResetColor();
-            Console.WriteLine("1. 정보 확인");
-            Console.WriteLine("2. 상점 방문");
-            Console.WriteLine("3. 숲으로 향한다.\n");
+            Console.WriteLine("1. 가방을 열어본다.");
+            Console.WriteLine("2. 상점을 방문한다.");
+            Console.WriteLine("3. 라면을 먹으러 간다. (500금화)");
+            Console.WriteLine("4. 숲으로 향한다.\n");
 
             ConsoleKey key = GameManager.GM.ReadNunberKeyInfo(4);
 
@@ -54,7 +56,11 @@ class Town : IInventory
             {
                 VisitShop();
             }
-            else if (key == ConsoleKey.D3) // 던전
+            else if (key == ConsoleKey.D3) // 여관 휴식
+            {
+                VisitInn();
+            }
+            else if (key == ConsoleKey.D4) // 던전
             {
                 moveRegion = Region.Dungeon;
                 return;
@@ -65,7 +71,8 @@ class Town : IInventory
     void RenderVisitShop()
     {
         Console.Clear();
-        Console.WriteLine($"[상점] __________ 가진 금화 : {player.Gold}\n");
+        ImageManager.IM.RenderImage("Shop");
+        Console.WriteLine($"가진 금화 : {player.Gold}\n");
 
         for (int num = 0; num < inventory.Count; num++)
         {
@@ -82,6 +89,30 @@ class Town : IInventory
             Console.WriteLine(invenText);
         }
         Console.WriteLine("\n___________________\n");
+    }
+
+    void VisitInn()
+    {
+        Console.Clear();
+        ImageManager.IM.RenderImage("Town");
+        if (player.Gold >= 500)
+        {
+            Console.WriteLine
+            (
+            $"{player.Name}은 라면 두 그릇을 먹고 숙소로 돌아왔다." +
+            $"\n오늘도 고생하셨습니다 {player.Job}님"
+            );
+            Thread.Sleep(2000);
+            Console.WriteLine("\n체력을 모두 회복하였습니다.");
+            Console.WriteLine("500금화를 지불하였습니다.");
+            player.Hp = player.MaxHp;
+        }else
+        {
+            Console.WriteLine("소지 금화가 부족하다..");
+        }
+
+
+        GameManager.GM.PressAnyKey();
     }
 
     void VisitShop()
@@ -154,29 +185,7 @@ class Town : IInventory
         while (true)
         {
             Console.Clear();
-            Console.WriteLine($"[가방] ______________ 가진 금화 : {player.Gold}\n");
-            for (int num = 0; num < player.Inventory.Count; num++)
-            {
-                StringBuilder invenText = new StringBuilder();
-
-                invenText.Append($"{num + 1}. ");
-                foreach (var item in player.EquipmentParts)
-                {
-                    if (item == player.Inventory[num])
-                    {
-                        invenText.Append("[E]");
-                    }
-
-                }
-                invenText.Append($"{player.Inventory[num].Name}\t\t");
-
-                if (player.Inventory[num] is Equipment)
-                {
-                    invenText.Append($"금화 : {player.Inventory[num].Gold * 0.8f}");
-                }
-
-                Console.WriteLine(invenText);
-            }
+            player.RenderInventori(true);
             Console.WriteLine("___________________\n");
             Console.WriteLine($"판매할 물품의 번호를 입력해주세요. (0. 돌아가기)\n");
             ConsoleKey inputKey = GameManager.GM.ReadNunberKeyInfo(player.Inventory.Count);

@@ -62,7 +62,7 @@ class SteelSword : Equipment
         part = (int)EquipmentPart.Right;
 
         gold = 500;
-        atk = 10;
+        atk = 15;
     }
 }
 
@@ -75,7 +75,7 @@ class ShortBow : Equipment
         part = (int)EquipmentPart.TwoHand;
 
         gold = 700;
-        atk = 15;
+        atk = 20;
         def = -3;
     }
 }
@@ -89,7 +89,7 @@ class LongLance : Equipment
         part = (int)EquipmentPart.TwoHand;
 
         gold = 1500;
-        atk = 20;
+        atk = 40;
     }
 }
 
@@ -102,7 +102,7 @@ class SteelShield : Equipment
         part = (int)EquipmentPart.Left;
 
         gold = 1500;
-        def = 5;
+        def = 10;
     }
 }
 
@@ -115,7 +115,7 @@ class WoodShield : Equipment
         part = (int)EquipmentPart.Left;
 
         gold = 500;
-        def = 3;
+        def = 8;
     }
 }
 
@@ -128,7 +128,7 @@ class LeatherArmour : Equipment
         part = (int)EquipmentPart.Top;
 
         gold = 1000;
-        def = 8;
+        def = 10;
     }
 }
 
@@ -142,7 +142,7 @@ class PlateArmour : Equipment
 
         gold = 5000;
         atk = -5;
-        def = 25;
+        def = 20;
     }
 }
 
@@ -155,7 +155,7 @@ class LeatherPants : Equipment
         part = (int)EquipmentPart.Pants;
 
         gold = 700;
-        def = 5;
+        def = 7;
     }
 }
 
@@ -168,6 +168,6 @@ class LeatherShoes : Equipment
         part = (int)EquipmentPart.Shoes;
 
         gold = 300;
-        def = 3;
+        def = 5;
     }
 }

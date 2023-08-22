@@ -116,7 +116,7 @@ struct StartScene
                     {
                         AddStatus(0, 10, 0);
                         sayWhereRUgoing.Append("품 속에서 작은 단검을 꺼내 들고 가게 주인을 공격했습니다.");
-                        newJob = "중범죄자";
+                        newJob = "범죄자";
                     }
                     isSelectWeapon = true;
                     break;
