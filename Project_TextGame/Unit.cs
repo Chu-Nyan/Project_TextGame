@@ -1,9 +1,12 @@
-﻿using System.Text;
+﻿using System.Runtime.InteropServices;
+using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 enum MonsterCode
 {
     Goblin,
-    Orc
+    Orc,
+    Golem
 }
 
 interface IInventory
@@ -16,6 +19,10 @@ struct BattlePhase
 {
     Player player;
     Monster monster;
+
+    StringBuilder playerAtkTxt = new StringBuilder();
+    StringBuilder playerDefTxt = new StringBuilder();
+
     public BattlePhase(Player player, Monster monster)
     {
         this.player = player;
@@ -29,23 +36,28 @@ struct BattlePhase
 
     void RenderBattleScene()
     {
-        while (player.IsDead ==false && monster.IsDead ==false)
+        bool isMyTurn = true;
+        while (player.IsDead == false && monster.IsDead == false)
         {
             Console.Clear();
-            Console.WriteLine($"\t{player.Name}  VS  {monster.Name}    ");
-            Console.WriteLine($"{player.Hp}\t  VS  {monster.Hp}");
+            ImageManager.IM.vsMonster(player, monster);
 
-            BattleUnits();
+            Console.WriteLine("전투 메세지 :");
+
+            if (isMyTurn == true)
+            {
+                AttckUnit(player, monster);
+
+                isMyTurn = false;
+            }
+            else if (isMyTurn == false && monster.IsDead == false)
+            {
+                Console.WriteLine(playerAtkTxt);
+                Console.WriteLine(playerDefTxt);
+                AttckUnit(monster, player);
+                isMyTurn = true;
+            }
         }
-    }
-
-    void BattleUnits()
-    {
-        StringBuilder playerAtkTxt = new StringBuilder($"{player.Name}의 공격!!");
-        StringBuilder playerDefTxt = new StringBuilder();
-        StringBuilder MonsterAtkTxt = new StringBuilder();
-        StringBuilder MonsterDefTxt = new StringBuilder();
-        AttckUnit(player, monster);
     }
 
     void AttckUnit(Unit atkUnit, Unit defUnit)
@@ -57,13 +69,47 @@ struct BattlePhase
         }
         defUnit.Hp -= damage;
 
-        StringBuilder playerAtkTxt = new StringBuilder($"{atkUnit.Name}의 공격!!");
-        StringBuilder playerDefTxt = new StringBuilder($"{defUnit.Name}은 {damage}의 피해를 입었다!!");
-        Thread.Sleep(1000);
+        playerAtkTxt = new StringBuilder($"\n{atkUnit.Name}{AddAttckText()}");
+        playerDefTxt = new StringBuilder($"{defUnit.Name}은 {damage}의 피해를 입었다!!");
         Console.WriteLine(playerAtkTxt);
         Thread.Sleep(1000);
         Console.WriteLine(playerDefTxt);
         Thread.Sleep(1000);
+        if (defUnit.IsDead == true)
+        {
+            defUnit.DeadTigger(atkUnit);
+            return;
+        }
+    }
+
+    StringBuilder AddAttckText()
+    {
+        Random randomText = new Random();
+        StringBuilder attckText = new StringBuilder();
+
+        switch (randomText.Next(0, 5))
+        {
+            case 0:
+                attckText.Append("은(는) 왼쪽으로 파고 들었다");
+                break;
+            case 1:
+                attckText.Append("은(는) 하늘로 날아올랐다.");
+                break;
+            case 2:
+                attckText.Append("은(는) 사라졌다가 뒤에서 나타났다.");
+                break;
+            case 3:
+                attckText.Append("이(가) 밥상을 뒤집었다!!");
+                break;
+            case 4:
+                attckText.Append(" \"선라이트 옐로 오버드라이브!!\"");
+                break;
+            default:
+                attckText.Append("는 공격하였다");
+                break;
+        }
+        return attckText;
+
     }
 
 }
@@ -80,7 +126,7 @@ class Unit
     protected bool isDead = false;
 
     public string Name { get { return name; } set { name = value; } }
-    public int MaxHp { get { return maxHp; } set { maxHp = value; } }
+    public virtual int MaxHp { get { return maxHp; } set { maxHp = value; } }
     public virtual int Hp
     {
         get { return hp; }
@@ -94,13 +140,24 @@ class Unit
             }
         }
     }
-    public int Atk { get { return atk; } set { atk = value; } }
-    public int Def { get { return def; } set { def = value; } }
+    public virtual int Atk { get { return atk; } set { atk = value; } }
+    public virtual int Def { get { return def; } set { def = value; } }
     public virtual int Exp { get { return exp; } set { exp = value; } }
     public int Gold { get { return gold; } set { gold = value; } }
     public bool IsDead { get { return isDead; } set { isDead = value; } }
 
     public virtual void RenderStatus() { }
+
+    public virtual void DeadTigger(Unit Killer)
+    {
+        StringBuilder Text = new StringBuilder($"{Name}은 무참하게 죽었다.\n\n");
+        Killer.Exp += Exp;
+        Killer.Gold += gold;
+        Text.AppendLine($"{Killer.Name}은 경험치 {Exp}를 획득하였습니다.");
+        Text.AppendLine($"{gold}금화를 획득하였습니다.");
+        Console.WriteLine("\n" + Text);
+
+    }
 }
 
 class Player : Unit, IInventory
@@ -154,7 +211,8 @@ class Player : Unit, IInventory
             }
         }
     }
-
+    public override int Atk { get { return atk + itemAtk; } set { atk = value; } }
+    public override int Def { get { return def + itemDef; } set { def = value; } }
     public List<Item> Inventory
     {
         get { return inventory; }
@@ -235,9 +293,19 @@ class Player : Unit, IInventory
         Hp = MaxHp;
         atk += 2;
         def += 1;
-        Console.WriteLine("레벨업");
+        Console.WriteLine("\nL E V E L U P !!!");
+        Thread.Sleep(2000);
     }
 
+    // 죽었을 경우
+    public override void DeadTigger(Unit Killer)
+    {
+        StringBuilder Text = new StringBuilder($"{Name}은 {Killer.Name}에게 비참하게 죽었다.\n");
+        Text.AppendLine("마을로 돌아갑니다");
+        Console.WriteLine("\n" + Text);
+
+        GameManager.GM.PressAnyKey();
+    }
 
     // 인벤토리 UI
     public void InventoriUI()
@@ -248,7 +316,7 @@ class Player : Unit, IInventory
             Console.Clear();
             RenderStatus();
 
-            if (switchSeclectInven ==false)
+            if (switchSeclectInven == false)
             {
                 RenderInventori(switchSeclectInven);
                 Console.WriteLine("1. 장착 관리 2. 정렬 3. 닫기");
@@ -289,10 +357,7 @@ class Player : Unit, IInventory
         {
             ChangeParts((Equipment)Inventory[(int)inputKey - 49]);
         }
-
-
     }
-
 
     // 아이템 장착 및 해제
     public void ChangeParts(Equipment item)
@@ -356,30 +421,26 @@ class Player : Unit, IInventory
             itemDef += item.Def;
         }
     }
-
+    
     // 스테이터스 내용 출력
     public override void RenderStatus()
     {
         StringBuilder topTextBar = new StringBuilder("┌───────────────────────────────────────────────┐");
-        topTextBar.Remove(2, 4 + name.Length*2);
-        topTextBar.Insert(2, "　"+name+ "　");
+        topTextBar.Remove(2, 4 + name.Length * 2 + 5 + level.ToString().Length);
+        topTextBar.Insert(2, "　" + name + " Lv. " + Level + "　");
 
         Console.WriteLine(topTextBar);
         Console.WriteLine($"│   직업 : {Job}             \t\t\t│");
-        Console.Write($"│   체력 : {Hp} / {MaxHp}\t 공격력 : {Atk} + {itemAtk}");
+        Console.Write($"│   체력 : {Hp} / {MaxHp}\t 공격력 : {Atk} + ({itemAtk})");
         Console.WriteLine("\t│");
-        Console.Write($"│   경험치 : {Exp} / {LevelUpExp}\t 방어력 : {Def} + {itemDef}");
+        Console.Write($"│   경험치 : {Exp} / {LevelUpExp}\t 방어력 : {Def} + ({itemDef})");
         Console.WriteLine("　\t│");
         Console.WriteLine("└───────────────────────────────────────────────┘");
 
 
     }
 
-    public void RenderChoiceOne()
-    {
-
-    }
-
+    
     // 인벤토리 출력
     public void RenderInventori(bool isSeclet)
     {
@@ -412,9 +473,9 @@ class Player : Unit, IInventory
                 {
                     continue;
                 }
-                twoSpacebarChar ++;
+                twoSpacebarChar++;
             }
-            int nameSpaceNum = 25 - (invenText.Length+twoSpacebarChar);
+            int nameSpaceNum = 25 - (invenText.Length + twoSpacebarChar);
             for (int i = 0; i < nameSpaceNum; i++) // 한글까지 감안하여 빈공간 추가
             {
                 invenText.Append(' ');
@@ -425,7 +486,7 @@ class Player : Unit, IInventory
             {
                 if (((Equipment)Inventory[num]).Atk != 0)
                 {
-                    invenText.Append($"ATK : {((Equipment)Inventory[num]).Atk}".PadRight(10,' '));
+                    invenText.Append($"ATK : {((Equipment)Inventory[num]).Atk}".PadRight(10, ' '));
                 }
                 if (((Equipment)Inventory[num]).Def != 0)
                 {
@@ -439,7 +500,8 @@ class Player : Unit, IInventory
                 if (invenText[i] == '[')
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-                }else if (invenText[i] == ']')
+                }
+                else if (invenText[i] == ']')
                 {
                     Console.Write(invenText[i]);
                     Console.ResetColor();
@@ -458,27 +520,41 @@ class Player : Unit, IInventory
 
 struct MonsterDB
 {
-    public MonsterDB(MonsterCode code, out string name, out int hp, out int atk, out int def)
+    public MonsterDB(MonsterCode code, out string name, out int hp, out int atk, out int def, out int exp, out int gold)
     {
         switch (code)
         {
             case MonsterCode.Goblin:
                 name = "고블린";
-                hp = 40;
-                atk = 5;
-                def = 2;
+                hp = 60;
+                atk = 20;
+                def = 5;
+                exp = 10;
+                gold = 200;
                 break;
             case MonsterCode.Orc:
                 name = "오크";
-                hp = 60;
-                atk = 10;
-                def = 5;
+                hp = 120;
+                atk = 30;
+                def = 7;
+                exp = 20;
+                gold = 400;
+                break;
+            case MonsterCode.Golem:
+                name = "골렘";
+                hp = 200;
+                atk = 40;
+                def = 20;
+                exp = 50;
+                gold = 1000;
                 break;
             default:
                 name = "오류";
                 hp = 1;
                 atk = 0;
                 def = 0;
+                exp = 1;
+                gold = 1;
                 break;
         }
     }
@@ -486,8 +562,31 @@ struct MonsterDB
 
 class Monster : Unit
 {
-    public Monster(MonsterCode code)
+    public Monster(MonsterCode code, float revisionStatus)
     {
-        MonsterDB monsterDB = new MonsterDB(MonsterCode.Goblin, out name, out hp, out atk, out def);
+        new MonsterDB(code, out name, out hp, out atk, out def, out exp, out gold);
+        ReviseStatus(revisionStatus);
+        maxHp = hp;
+
+    }
+
+    public override void DeadTigger(Unit Killer)
+    {
+        Killer.Exp += Exp;
+        Killer.Gold += gold;
+
+        StringBuilder Text = new StringBuilder($"{Name}은 무참하게 죽었다.\n\n");
+        Text.AppendLine($"{Killer.Name}은 경험치 {Exp}를 획득하였습니다.");
+        Text.AppendLine($"{gold}금화를 획득하였습니다.");
+        Console.WriteLine("\n" + Text);
+        GameManager.GM.PressAnyKey();
+
+    }
+
+    void ReviseStatus(float revisionVaule)
+    {
+        Hp = (int)(Hp * revisionVaule);
+        Atk = (int)(Atk * revisionVaule);
+        Def = (int)(Def * revisionVaule);
     }
 }

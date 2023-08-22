@@ -1,22 +1,21 @@
 ﻿enum ItemID
 {
-    SteelSword = 1000,
-    ShortBow,
-    LongLance,
-    WoodShield,
-    SteelShield,
-    LeatherArmour,
-    PlateArmour,
+    // 무기 (왼손,양손)
+    SteelSword = 1000, ShortBow, LongLance,
+    // 무기 (오른손)
+    WoodShield, SteelShield,
+    // 상의 방어구
+    LeatherArmour, PlateArmour,
+    // 하의 방어구
     LeatherPants,
+    // 신발 방어구
     LeatherShoes
 }
 
 enum EquipmentPart
 {
-    //무기
-    Left = 0,
-    Right,
-    TwoHand,
+    //무기 
+    Left = 0, Right, TwoHand,
     //방어구
     Head = 3,
     Top,
