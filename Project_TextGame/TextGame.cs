@@ -13,6 +13,9 @@ internal class TextGame
 {
     static void Main()
     {
+
+        //폰트 : D2Coding
+
         new ImageManager();
         new GameManager();
 
