@@ -58,7 +58,7 @@ class SteelSword : Equipment
 {
     public SteelSword() 
     {
-        name = "철검    ";
+        name = "철검";
         id = (int)ItemID.SteelSword;
         part = (int)EquipmentPart.Right;
 

@@ -41,26 +41,22 @@ class Town : IInventory
                 "질 좋은 라면이 공급되고 있는 모양이니 나가기 전에 한그릇 해야겠다.\n"
                 );
             Console.WriteLine("어떤 행동을 하시겠습니까?");
-            Console.WriteLine("1. 나의 정보 확인");
-            Console.WriteLine("2. 가방 열기");
-            Console.WriteLine("3. 상점 방문");
-            Console.WriteLine("4. 숲으로 향한다.\n");
+            Console.WriteLine("1. 정보 확인");
+            Console.WriteLine("2. 상점 방문");
+            Console.WriteLine("3. 숲으로 향한다.\n");
 
             ConsoleKey key = GameManager.GM.ReadNunberKeyInfo(4);
 
             if (key == ConsoleKey.D1) // 나의 정보 확인
             {
-                player.RenderStatus();
-            }
-            else if (key == ConsoleKey.D2) // 가방 열기
-            {
                 player.InventoriUI();
+
             }
-            else if (key == ConsoleKey.D3) // 상점 방문
+            else if (key == ConsoleKey.D2) // 상점 방문
             {
                 VisitShop();
             }
-            else if (key == ConsoleKey.D4) // 던전
+            else if (key == ConsoleKey.D3) // 던전
             {
                 moveRegion = Region.Dungeon;
                 return;
@@ -275,15 +271,30 @@ class Dungeon
         Monster newMonster = new Monster(MonsterCode.Goblin);
         BattlePhase battlePhase = new BattlePhase(player, newMonster);
         battlePhase.BattleScene();
-
-
     }
+
+
 }
 
 internal class TextGame
 {
     static void Main()
     {
+        //SteelSword steelSword = new SteelSword();
+        //StringBuilder border = new StringBuilder("|                    |");// 스페이스바 20개
+        //Console.WriteLine(border);
+        //int spacebar = 0;
+        //foreach (char c in steelSword.Name) 
+        //{ 
+        //    if (c == ' ')
+        //    {
+        //        spacebar++;
+        //    }
+        //}
+        //border.Remove(1, steelSword.Name.Length*2-spacebar);
+        //border.Insert(1, steelSword.Name);
+        //Console.WriteLine(border);
+
         new GameManager();
         Player newPlayer = new Player();
         Town town = new Town(newPlayer);

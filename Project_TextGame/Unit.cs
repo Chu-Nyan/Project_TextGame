@@ -107,7 +107,8 @@ class Player : Unit, IInventory
 {
     public Player()
     {
-        job = "";
+        name = "츄냥";
+        job = "디버그";
         maxHp = 100;
         hp = 100;
         atk = 20;
@@ -241,24 +242,39 @@ class Player : Unit, IInventory
     // 인벤토리 UI
     public void InventoriUI()
     {
+        bool switchSeclectInven = false;
         while (true)
         {
-            RenderInventori(false);
-            Console.WriteLine("1. 장착 관리 2. 정렬 3. 닫기");
-            ConsoleKey inputKey = GameManager.GM.ReadNunberKeyInfo(3);
-            if (inputKey == ConsoleKey.D1)
+            Console.Clear();
+            RenderStatus();
+
+            if (switchSeclectInven ==false)
+            {
+                RenderInventori(switchSeclectInven);
+                Console.WriteLine("1. 장착 관리 2. 정렬 3. 닫기");
+                ConsoleKey inputKey = GameManager.GM.ReadNunberKeyInfo(3);
+                if (inputKey == ConsoleKey.D1)
+                {
+                    switchSeclectInven = true;
+                    continue;
+                }
+                else if (inputKey == ConsoleKey.D2)
+                {
+                    Inventory = Inventory.OrderBy(item => item.ID).ToList();
+                    Inventory = Inventory.OrderBy(item => item.ID).ToList();
+                }
+                else if (inputKey == ConsoleKey.D3)
+                {
+                    return;
+                }
+            }
+            else
             {
                 ChangeEquipmentUI();
+                switchSeclectInven = false;
+
             }
-            else if (inputKey == ConsoleKey.D2)
-            {
-                Inventory = Inventory.OrderBy(item => item.ID).ToList();
-                Inventory = Inventory.OrderBy(item => item.ID).ToList();
-            }
-            else if (inputKey == ConsoleKey.D3)
-            {
-                return;
-            }
+
         }
     }
 
@@ -344,36 +360,41 @@ class Player : Unit, IInventory
     // 스테이터스 내용 출력
     public override void RenderStatus()
     {
-        Console.WriteLine($"{Name} ___________");
-        Console.WriteLine($"직업 : {Job}");
-        Console.WriteLine($"체력 : {Hp} / {MaxHp}");
-        Console.WriteLine($"경험치 : {Exp} / {LevelUpExp}");
-        Console.WriteLine($"공격력 : {Atk} + {itemAtk}");
-        Console.WriteLine($"방어력 : {Def} + {itemDef}\n");
+        StringBuilder topTextBar = new StringBuilder("┌───────────────────────────────────────────────┐");
+        topTextBar.Remove(2, 4 + name.Length*2);
+        topTextBar.Insert(2, "　"+name+ "　");
 
-        Console.WriteLine("1. 돌아가기");
-        ConsoleKey inputKey = GameManager.GM.ReadNunberKeyInfo(1);
-        if (inputKey == ConsoleKey.D1)
-        {
-            return;
-        }
+        Console.WriteLine(topTextBar);
+        Console.WriteLine($"│   직업 : {Job}             \t\t\t│");
+        Console.Write($"│   체력 : {Hp} / {MaxHp}\t 공격력 : {Atk} + {itemAtk}");
+        Console.WriteLine("\t│");
+        Console.Write($"│   경험치 : {Exp} / {LevelUpExp}\t 방어력 : {Def} + {itemDef}");
+        Console.WriteLine("　\t│");
+        Console.WriteLine("└───────────────────────────────────────────────┘");
+
+
     }
 
-    // 인벤토리 내용 출력
+    public void RenderChoiceOne()
+    {
+
+    }
+
+    // 인벤토리 출력
     public void RenderInventori(bool isSeclet)
     {
-        Console.Clear();
-        Console.WriteLine($"[가방] ______________ 가진 금화 : {Gold}\n");
+        Console.WriteLine($"[가방]                         가진 금화 : {Gold}");
+        Console.WriteLine("┌───────────────────────────────────────────────┐");
+
         for (int num = 0; num < Inventory.Count; num++)
         {
-            StringBuilder invenText = new StringBuilder();
-
-            if (isSeclet == true)
+            StringBuilder invenText = new StringBuilder("│ ");
+            if (isSeclet == true) // 선택형 인벤토리일경우 숫자 추가
             {
                 invenText.Append($"{num + 1}. ");
 
             }
-            foreach (var item in equipmentParts)
+            foreach (var item in equipmentParts) // 장착한 아이템일 경우 [E]추가
             {
                 if (item == Inventory[num])
                 {
@@ -381,25 +402,56 @@ class Player : Unit, IInventory
                 }
 
             }
-            invenText.Append($"{Inventory[num].Name}\t\t");
+            invenText.Append($"{Inventory[num].Name}");
 
-            if (Inventory[num] is Equipment)
+            int twoSpacebarChar = 0;
+
+            for (int i = 0; i < Inventory[num].Name.Length; i++) // 인벤토리의 한글(스페이스바 두 개 크기)은 몇개인가?
+            {
+                if (Inventory[num].Name[i] == ' ')
+                {
+                    continue;
+                }
+                twoSpacebarChar ++;
+            }
+            int nameSpaceNum = 25 - (invenText.Length+twoSpacebarChar);
+            for (int i = 0; i < nameSpaceNum; i++) // 한글까지 감안하여 빈공간 추가
+            {
+                invenText.Append(' ');
+            }
+            invenText.Append("│  ");
+            int hereLength = invenText.Length;
+            if (Inventory[num] is Equipment) // 능력치 UI 추가
             {
                 if (((Equipment)Inventory[num]).Atk != 0)
                 {
-                    invenText.Append($"ATK : {((Equipment)Inventory[num]).Atk}\t");
+                    invenText.Append($"ATK : {((Equipment)Inventory[num]).Atk}".PadRight(10,' '));
                 }
                 if (((Equipment)Inventory[num]).Def != 0)
                 {
-                    invenText.Append($"DEF : {((Equipment)Inventory[num]).Def}");
-
+                    invenText.Append($"DEF : {((Equipment)Inventory[num]).Def}".PadRight(10, ' '));
+                }
+                invenText.Append("                                     ");
+                invenText.Insert(hereLength + 20, '│');
+            }
+            for (int i = 0; i < invenText.Length; i++) // [E] 색깔 칠하기
+            {
+                if (invenText[i] == '[')
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                }else if (invenText[i] == ']')
+                {
+                    Console.Write(invenText[i]);
+                    Console.ResetColor();
+                    continue;
                 }
 
-            }
+                Console.Write(invenText[i]);
 
-            Console.WriteLine(invenText);
+            }
+            Console.WriteLine();
         }
-        Console.WriteLine("___________________\n");
+        Console.WriteLine("└───────────────────────────────────────────────┘");
     }
 }
 
