@@ -184,11 +184,10 @@ class Town : IInventory
             else // 구매 성공
             {
                 player.Gold -= inventory[(int)inputKey - 49].Gold;
-                player.AddItem(inventory[(int)inputKey - 49]);
+                player.AddItem(GameManager.GM.CopyItem(inventory[(int)inputKey - 49].ID));
                 inventory[(int)inputKey - 49].Gold = 0;
             }
         }
-
     }
 
     //상점에서 판매

@@ -43,4 +43,44 @@
         }
         Thread.Sleep(1000);
     }
+
+    public Item CopyItem(int code)
+    {
+        Item item;
+        switch ((ItemID)code)
+        {
+            case ItemID.SteelSword:
+                item = new SteelSword();
+                break;
+            case ItemID.ShortBow:
+                item = new ShortBow();
+                break;
+            case ItemID.LongLance:
+                item = new LongLance();
+                break;
+            case ItemID.WoodShield:
+                item = new WoodShield();
+                break;
+            case ItemID.SteelShield:
+                item = new SteelShield();
+                break;
+            case ItemID.LeatherArmour:
+                item = new LeatherArmour();
+                break;
+            case ItemID.PlateArmour:
+                item = new PlateArmour();
+                break;
+            case ItemID.LeatherPants:
+                item = new LeatherPants();
+                break;
+            case ItemID.LeatherShoes:
+                item = new LeatherShoes();
+                break;
+            default:
+                item = new Item();
+                Console.WriteLine("public Item CopyItem(ItemID code)");
+                break;
+        }
+        return item;
+    }
 }

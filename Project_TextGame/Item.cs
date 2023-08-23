@@ -172,3 +172,4 @@ class LeatherShoes : Equipment
         def = 5;
     }
 }
+
