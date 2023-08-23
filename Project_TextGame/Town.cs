@@ -1,5 +1,10 @@
 ﻿using System.Text;
 
+enum Region
+{
+    Town, Dungeon
+}
+
 class Town : IInventory
 {
     Region moveRegion;
@@ -18,7 +23,7 @@ class Town : IInventory
         this.player = player;
     }
 
-    // 마을 입출국 관리 함수
+    // 마을 입출국 관리
     public Region VisitTown()
     {
         player.IsDead = false;
@@ -26,6 +31,7 @@ class Town : IInventory
         return moveRegion;
     }
 
+    // 마을 UI 출력
     void RenderTownUI()
     {
         while (true)
@@ -68,6 +74,7 @@ class Town : IInventory
         }
     }
 
+    // 상점 UI 출력
     void RenderVisitShop()
     {
         Console.Clear();
@@ -91,6 +98,7 @@ class Town : IInventory
         Console.WriteLine("\n___________________\n");
     }
 
+    // 여관 방문
     void VisitInn()
     {
         Console.Clear();
@@ -112,9 +120,10 @@ class Town : IInventory
         }
 
 
-        GameManager.GM.PressAnyKey();
+        GameManager.GM.PressEnterKey();
     }
 
+    // 상점 선택지
     void VisitShop()
     {
         while (true)
@@ -139,6 +148,7 @@ class Town : IInventory
         }
     }
 
+    // 상점에서 구매
     void BuyShopItem()
     {
         while (true)
@@ -158,17 +168,17 @@ class Town : IInventory
             else if (inventory[(int)inputKey - 49].Gold > player.Gold) // 금화 부족
             {
                 Console.WriteLine("가진 금화가 부족합니다.");
-                GameManager.GM.PressAnyKey();
+                GameManager.GM.PressEnterKey();
             }
             else if (player.Inventory.Count >= 10) // 입력 오류
             {
                 Console.WriteLine("가방이 가득 찼습니다.");
-                GameManager.GM.PressAnyKey();
+                GameManager.GM.PressEnterKey();
             }
             else if (inventory[(int)inputKey - 49].Gold == 0)
             {
                 Console.WriteLine("이미 구매한 아이템입니다.");
-                GameManager.GM.PressAnyKey();
+                GameManager.GM.PressEnterKey();
             }
             else // 구매 성공
             {
@@ -180,6 +190,7 @@ class Town : IInventory
 
     }
 
+    //상점에서 판매
     void SellShopItem()
     {
         while (true)
@@ -212,7 +223,7 @@ class Town : IInventory
 
                 StringBuilder sellTxt = new StringBuilder($"{sellItem.Name}을(를) {sellGold}금화에 판매하였습니다.");
                 Console.WriteLine(sellTxt);
-                GameManager.GM.PressAnyKey();
+                GameManager.GM.PressEnterKey();
             }
         }
     }

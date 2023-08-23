@@ -44,6 +44,11 @@ class ImageManager
         "┃    ｜/      /／                                                   ┃\n" +
         "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
 
+    public ImageManager()
+    {
+        IM = this;
+    }
+
     public void vsMonster(Unit player, Unit monster)
     {
         float playerHP = (float)player.Hp / player.MaxHp;
@@ -117,11 +122,6 @@ class ImageManager
         Console.WriteLine("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
     }
 
-    public ImageManager() 
-    {
-        IM = this;
-    }
-
     public void RenderImage(string place)
     {
         switch (place)
@@ -135,8 +135,6 @@ class ImageManager
             case "Shop":
                 Console.WriteLine(Shop);
                 break;
-
-
             default:
                 break;
         }

@@ -205,7 +205,7 @@ struct StartScene
             }
         }
         Console.WriteLine("\n\n\n옛 생각을 하다 보니 어느샌가 마을에 도착했다.");
-        GameManager.GM.PressAnyKey();
+        GameManager.GM.PressEnterKey();
     }
 
     // 신규 플레이어 스테이터스 추가

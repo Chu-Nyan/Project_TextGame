@@ -14,7 +14,7 @@ interface IInventory
     public List<Item> Inventory { get; }
 }
 
-
+// 전투 페이즈
 struct BattlePhase
 {
     Player player;
@@ -293,7 +293,7 @@ class Player : Unit, IInventory
         }
 
         Console.WriteLine($"\n{newItem.Name}을 획득하였습니다.");
-        GameManager.GM.PressAnyKey();
+        GameManager.GM.PressEnterKey();
     }
 
     //레벨 업 함수
@@ -317,7 +317,7 @@ class Player : Unit, IInventory
         Text.AppendLine("마을로 돌아갑니다");
         Console.WriteLine("\n" + Text);
 
-        GameManager.GM.PressAnyKey();
+        GameManager.GM.PressEnterKey();
     }
 
     // 인벤토리 UI
@@ -530,7 +530,6 @@ class Player : Unit, IInventory
     }
 }
 
-
 struct MonsterDB
 {
     public MonsterDB(MonsterCode code, out string name, out int hp, out int atk, out int def, out int exp, out int gold)
@@ -599,7 +598,7 @@ class Monster : Unit
         Killer.Exp += Exp;
         Killer.Gold += gold;
 
-        GameManager.GM.PressAnyKey();
+        GameManager.GM.PressEnterKey();
 
     }
 

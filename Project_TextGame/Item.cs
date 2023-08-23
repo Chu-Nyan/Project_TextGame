@@ -23,6 +23,7 @@ enum EquipmentPart
     Shoes
 }
 
+//모든 아이템
 class Item
 {
     protected string name = "";
@@ -34,6 +35,7 @@ class Item
     public int ID { get { return id; } }
 }
 
+//장비 아이템
 class Equipment : Item
 {
     protected int part = 0;
@@ -45,7 +47,6 @@ class Equipment : Item
     public int Def { get { return def; } }
     public int Part { get { return part; } }
     public bool IsEquip { get { return isEquip; } set { isEquip = value; } }
-
 }
 
 class Postion : Item

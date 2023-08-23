@@ -4,16 +4,12 @@ using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Text;
 
-enum Region
-{
-    Town, Dungeon
-}
+
 
 internal class TextGame
 {
     static void Main()
     {
-
         //폰트 : D2Coding
 
         new ImageManager();

@@ -23,17 +23,11 @@
         return ConsoleKey.F24;
 
     }
-
-    public void PressAnyKey()
+    
+    // 엔터키 눌러주세요
+    public void PressEnterKey()
     {
         Console.WriteLine("\nPress 'Enter' Key To Continue");
         Console.ReadLine();
     }
-
-    public void MoveRegion()
-    {
-
-
-    }
-
 }
