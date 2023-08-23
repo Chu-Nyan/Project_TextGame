@@ -16,7 +16,6 @@
             {
                 return InputKey;
             }
-            Console.WriteLine("올바르게 입력했다면 ReadNunberKeyInfo 스위치문 수정이 필요합니다.");
         }
         Console.WriteLine("선택지를 다시 선택해주세요.");
         Thread.Sleep(1000);
@@ -29,5 +28,19 @@
     {
         Console.WriteLine("\nPress 'Enter' Key To Continue");
         Console.ReadLine();
+    }
+
+    public void OneMoreChance()
+    {
+        Console.Clear();
+        Console.WriteLine("\n\n\n");
+        string deathTxt = "진짜 이번 딱 한번만 살려드립니다.";
+        Console.Write("\t\t");
+        foreach (var txt in deathTxt)
+        {
+            Console.Write(txt);
+            Thread.Sleep(200);
+        }
+        Thread.Sleep(1000);
     }
 }

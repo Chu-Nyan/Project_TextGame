@@ -184,7 +184,7 @@ class Player : Unit, IInventory
         atk = 20;
         def = 3;
         exp = 0;
-        gold = 10000;
+        gold = 500;
 
         inventory.Add(new SteelSword());
         inventory.Add(new WoodShield());
@@ -196,7 +196,7 @@ class Player : Unit, IInventory
     // Player 스테이터스
     string job;
     int level = 1;
-    int levelUpExp = 20;
+    int levelUpExp = 50;
 
     int itemHp = 0;
     int itemAtk = 0;
@@ -217,7 +217,7 @@ class Player : Unit, IInventory
         set
         {
             exp = value;
-            if (exp >= levelUpExp)
+            while (exp >= levelUpExp)
             {
                 LevelUp();
             }
@@ -305,6 +305,8 @@ class Player : Unit, IInventory
         Hp = MaxHp;
         atk += 2;
         def += 1;
+
+        levelUpExp = (int)(LevelUpExp*1.2f);
         Console.WriteLine("\nL E V E L U P !!!");
         Thread.Sleep(2000);
     }
@@ -312,12 +314,15 @@ class Player : Unit, IInventory
     // 죽었을 경우
     public override void DeadTigger(Unit Killer)
     {
-        StringBuilder Text = new StringBuilder($"{Name}은 {Killer.Name}에게 비참하게 패배하였습니다.\n");
+        StringBuilder Text = new StringBuilder($"{Name}은 {Killer.Name}에게 비참하게 죽었습니다.\n");
         Hp = 1;
-        Text.AppendLine("마을로 돌아갑니다");
+        Text.AppendLine("게임을 종료합니다.");
         Console.WriteLine("\n" + Text);
 
         GameManager.GM.PressEnterKey();
+        Console.Clear();
+        Thread.Sleep(500);
+        GameManager.GM.OneMoreChance();
     }
 
     // 인벤토리 UI

@@ -98,7 +98,7 @@ class Town : IInventory
         Console.WriteLine("\n___________________\n");
     }
 
-    // 여관 방문
+    // 라면 먹고 자러가기
     void VisitInn()
     {
         Console.Clear();
@@ -113,6 +113,7 @@ class Town : IInventory
             Thread.Sleep(2000);
             Console.WriteLine("\n체력을 모두 회복하였습니다.");
             Console.WriteLine("500금화를 지불하였습니다.");
+            player.Gold -= 500;
             player.Hp = player.MaxHp;
         }else
         {
