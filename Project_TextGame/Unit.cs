@@ -196,7 +196,7 @@ class Player : Unit, IInventory
     // Player 스테이터스
     string job;
     int level = 1;
-    int levelUpExp = 50;
+    int levelUpExp = 10;
 
     int itemHp = 0;
     int itemAtk = 0;
@@ -217,10 +217,7 @@ class Player : Unit, IInventory
         set
         {
             exp = value;
-            while (exp >= levelUpExp)
-            {
-                LevelUp();
-            }
+            LevelUp(); 
         }
     }
     public override int Atk { get { return atk + itemAtk; } set { atk = value; } }
@@ -296,9 +293,12 @@ class Player : Unit, IInventory
         GameManager.GM.PressEnterKey();
     }
 
-    //레벨 업 함수
+    //레벨 업 함수 (재귀함수)
     void LevelUp()
     {
+        if (exp < levelUpExp)
+            return;
+
         exp -= levelUpExp;
         level++;
         MaxHp += 10;
@@ -308,7 +308,9 @@ class Player : Unit, IInventory
 
         levelUpExp = (int)(LevelUpExp*1.2f);
         Console.WriteLine("\nL E V E L U P !!!");
-        Thread.Sleep(2000);
+        Thread.Sleep(200);
+        LevelUp();
+        Thread.Sleep(1800);
     }
 
     // 죽었을 경우
