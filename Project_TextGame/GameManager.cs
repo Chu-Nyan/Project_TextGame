@@ -47,33 +47,33 @@
     public Item CopyItem(int code)
     {
         Item item;
-        switch ((ItemID)code)
+        switch ((ItemType)code)
         {
-            case ItemID.SteelSword:
+            case ItemType.SteelSword:
                 item = new SteelSword();
                 break;
-            case ItemID.ShortBow:
+            case ItemType.ShortBow:
                 item = new ShortBow();
                 break;
-            case ItemID.LongLance:
+            case ItemType.LongLance:
                 item = new LongLance();
                 break;
-            case ItemID.WoodShield:
+            case ItemType.WoodShield:
                 item = new WoodShield();
                 break;
-            case ItemID.SteelShield:
+            case ItemType.SteelShield:
                 item = new SteelShield();
                 break;
-            case ItemID.LeatherArmour:
+            case ItemType.LeatherArmour:
                 item = new LeatherArmour();
                 break;
-            case ItemID.PlateArmour:
+            case ItemType.PlateArmour:
                 item = new PlateArmour();
                 break;
-            case ItemID.LeatherPants:
+            case ItemType.LeatherPants:
                 item = new LeatherPants();
                 break;
-            case ItemID.LeatherShoes:
+            case ItemType.LeatherShoes:
                 item = new LeatherShoes();
                 break;
             default:
